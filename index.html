@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iling Chen – Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute("data-theme");
+      html.setAttribute("data-theme", current === "dark" ? "light" : "dark");
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Iling Chen</h1>
+    <p>Applied Data Science MSc Student | BSc Information Technology Management</p>
+    <a href="CV_Lin.pdf" download class="btn">Download My Resume</a>
+    <button onclick="toggleTheme()" class="btn" style="margin-left: 10px;">Toggle Theme</button>
+  </header>
+
+  <section class="about">
+    <h2>About Me</h2>
+    <p>I am an MSc Applied Data Science student at the University of Essex with a background in Information Technology and experience in full-end development, data analysis, and optimization algorithms.</p>
+    <img src="my-photo.jpg" alt="Replace with photo" class="profile-image">
+  
+  </section>
+  <section class="confidence">
+    <h2>Confidence Levels</h2>
+    <ul>
+      <li>Python: <progress value="90" max="100"></progress> 90%</li>
+      <li>SQL: <progress value="85" max="100"></progress> 85%</li>
+      <li>Java: <progress value="70" max="100"></progress> 70%</li>
+      <li>Data Analysis: <progress value="88" max="100"></progress> 88%</li>
+      <li>Frontend Development: <progress value="80" max="100"></progress> 80%</li>
+      <li>Backend Development: <progress value="75" max="100"></progress> 75%</li>
+    </ul>
+  </section>
+
+  <section class="skills">
+    <h2>Skills</h2>
+    <div class="skills-grid">
+      <div class="skills-grid">
+        <div class="skill"><i class="fa-brands fa-python"></i> Python</div>
+        <div class="skill"><i class="fa-solid fa-database"></i> SQL</div>
+        <div class="skill"><i class="fa-brands fa-java"></i> Java</div>
+        <div class="skill"><i class="fa-brands fa-js"></i> JavaScript</div>
+        <div class="skill"><i class="fa-brands fa-html5"></i> HTML</div>
+        <div class="skill"><i class="fa-brands fa-css3-alt"></i> CSS</div>
+        <div class="skill"><i class="fa-solid fa-chart-simple"></i> Data Analysis</div>
+        <div class="skill">Machine Learning</div>
+        <div class="skill">R</div>
+        <div class="skill">Tableau</div>
+        <div class="skill">Matplotlib</div>
+        <div class="skill">Backend Development</div>
+        <div class="skill">Git</div>
+    </div>
+  </section>
+
+<section class="learning-now">
+    <h2>What I'm Learning Now</h2>
+    <p>Currently exploring: <strong>Django</strong>, <strong>React.js</strong>, <strong>Cloud Platforms (AWS)</strong>, and <strong>Advanced Data Visualization</strong>.</p>
+  </section>
+
+  <section class="timeline">
+    <h2>Timeline</h2>
+    <ul>
+      <li><strong>2025 (now)</strong> – MSc in Applied Data Science @ University of Essex</li>
+      <li><strong>2023–2024</strong> – IT Assistant @ Shopee Taiwan</li>
+      <li><strong>2022–2023</strong> – EV Charging Project – Frontend + Data Optimization</li>
+      <li><strong>2020–2024</strong> – BSc in IT App & Management @ Ming Chuang University</li>
+    </ul>
+  </section>
+  
+  <section class="projects">
+    <h2>Projects</h2>
+    <div class="project">
+      <h3>EV Charging Behavior Analysis</h3>
+      <video class="project-img" controls muted autoplay loop>
+        <source src="ev_project_preview.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <p>Used clustering and regression techniques to analyze electric vehicle charging patterns and optimize energy use.</p>
+      <a href="https://github.com/cil101101/EVbattery_optimization" target="_blank">GitHub Repo</a>
+    </div>
+    <div class="project">
+      <h3>Crime & Weather Correlation (R Project)</h3>
+      <video class="project-img" controls muted autoplay loop>
+        <source src="colchester_project_visual.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <p>Explored crime data in Colchester and its correlation with weather using R, Leaflet, and Plotly. Created interactive maps and visual insights to support local policing strategies.</p>
+      <a href="https://github.com/cil101101/policing_colchester_visual" target="_blank">GitHub Repo</a>
+    </div>
+
+  <section class="experience">
+    <h2>Work Experience</h2>
+    <p><strong>Shopee Taiwan – IT Assistant</strong><br>Provided remote technical support to users purchasing digital game products. Delivered troubleshooting guidance and helped resolve issues related to software compatibility and code setup.</p>
+    <p><strong>Sansa Dance Izakaya – Waitress</strong><br>Maintained smooth kitchen operations and provided quality customer service, ensuring an enjoyable and efficient dining experience for guests.</p>
+  </section>
+
+  <section class="contact">
+    <h2>Contact</h2>
+    <p>Email: <a href="mailto:a0916897655@gmail.com">a0916897655@gmail.com</a></p>
+    <p>Phone: 07934587404</p>
+    <p>Location: Enso, Hawkins Rd, Colchester CO2 8YZ</p>
+    <p>GitHub: <a href="https://github.com/cil101101" target="_blank">cil101101</a></p>
+  </section>
+
+  <section class="languages">
+    <h2>Languages & Interests</h2>
+    <p><strong>Languages:</strong> Mandarin (Native), English (Fluent)</p>
+    <p><strong>Interests:</strong> Basketball 🏀, UI/UX Design, Interactive Visualizations, Coding Challenges</p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Iling Chen</p>
+  </footer>
+</body>
+</html>
+
