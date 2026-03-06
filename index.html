@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,150 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ── TERMINAL BOOT OVERLAY ── */
+    #boot-overlay {
+      position: fixed; inset: 0; z-index: 99999;
+      background: #000;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start;
+      padding: 3rem 4rem;
+      font-family: 'Share Tech Mono', monospace;
+      transition: opacity 0.6s ease;
+    }
+    #boot-overlay.hidden { opacity: 0; pointer-events: none; }
+    .boot-line {
+      font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+      color: #00f5ff;
+      opacity: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: bootFade 0.2s ease forwards;
+      margin-bottom: 0.25rem;
+    }
+    .boot-line.pink { color: #ff2d78; }
+    .boot-line.green { color: #00ff88; }
+    .boot-line.white { color: #fff; font-size: clamp(1rem, 3vw, 1.8rem); letter-spacing: 4px; }
+    @keyframes bootFade { to { opacity: 1; } }
+    #boot-bar-wrap {
+      margin-top: 1.5rem;
+      width: min(400px, 80vw);
+      height: 3px;
+      background: #111;
+      border: 1px solid #00f5ff33;
+    }
+    #boot-bar { height: 100%; width: 0; background: #00f5ff; box-shadow: 0 0 8px #00f5ff; transition: width 0.05s linear; }
+
+    /* ── DARK / LIGHT THEME ── */
+    [data-theme="light"] {
+      --dark-bg: #f0f4ff;
+      --dark-card: #ffffff;
+      --dark-border: #c0cce8;
+      --text-primary: #0a1628;
+      --text-muted: #4a6080;
+    }
+    [data-theme="light"] body { background-color: var(--dark-bg); color: var(--text-primary); }
+    [data-theme="light"] .grid-bg { background-image: linear-gradient(rgba(0,100,200,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,100,200,0.05) 1px, transparent 1px); }
+    [data-theme="light"] .scanlines { opacity: 0.15; }
+    [data-theme="light"] .navbar { background: rgba(240,244,255,0.92); border-bottom-color: #c0cce8; }
+    [data-theme="light"] .section { background: #fff; border-color: #c0cce8; }
+    [data-theme="light"] h1.glitch { color: #0a1628; text-shadow: 0 0 20px rgba(0,100,200,0.3); }
+    [data-theme="light"] .exp-list li, [data-theme="light"] .project-bullets li, [data-theme="light"] .project-card p { color: #3a5070; }
+    [data-theme="light"] .skill-bar-track, [data-theme="light"] .lang-bar-track { background: #e0e8f8; }
+    [data-theme="light"] .project-card, [data-theme="light"] .exp-card { background: rgba(0,100,200,0.03); }
+    [data-theme="light"] .github-activity { background: rgba(0,100,200,0.03); }
+    [data-theme="light"] .github-graph-wrap img { filter: none; opacity: 1; }
+
+    /* ── NAV CONTROLS ── */
+    .nav-controls { display: flex; align-items: center; gap: 0.6rem; }
+    .ctrl-btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 1.5px;
+      padding: 0.3rem 0.65rem;
+      border: 1px solid var(--dark-border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+    }
+    .ctrl-btn:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); box-shadow: 0 0 8px rgba(0,245,255,0.3); }
+    .ctrl-btn.lang-btn { color: var(--neon-pink); border-color: rgba(255,45,120,0.4); }
+    .ctrl-btn.lang-btn:hover { box-shadow: 0 0 8px rgba(255,45,120,0.4); border-color: var(--neon-pink); }
+
+    /* ── GITHUB ACTIVITY ── */
+    .github-activity {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(0,245,255,0.02);
+      border: 1px solid var(--dark-border);
+    }
+    .github-activity-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--neon-cyan);
+      letter-spacing: 2px;
+      margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .github-activity-title::before { content: '▸'; color: var(--neon-pink); }
+    .github-graph-wrap { width: 100%; overflow-x: auto; }
+    .github-graph-wrap img {
+      width: 100%; min-width: 280px;
+      filter: hue-rotate(160deg) saturate(1.5) brightness(0.9);
+      opacity: 0.85; display: block;
+    }
+
+    /* ── DISSERTATION BUTTON ── */
+    .btn-dissertation {
+      background: transparent;
+      color: var(--neon-yellow);
+      border: 1px solid rgba(245,230,66,0.5);
+      box-shadow: 0 0 12px rgba(245,230,66,0.12), inset 0 0 12px rgba(245,230,66,0.03);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      padding: 0.8rem 1.6rem;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      cursor: pointer; transition: all 0.3s;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+    .btn-dissertation:hover {
+      background: rgba(245,230,66,0.1);
+      box-shadow: 0 0 25px rgba(245,230,66,0.4);
+      transform: translateY(-2px);
+    }
+
+    /* ── LANGUAGE BARS ── */
+    .lang-bars { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1rem; }
+    .lang-bar-label {
+      display: flex; justify-content: space-between;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem; color: var(--text-primary); margin-bottom: 0.3rem;
+    }
+    .lang-bar-label span:last-child { color: var(--neon-yellow); }
+    .lang-bar-track { height: 5px; background: #111a2e; border: 1px solid var(--dark-border); overflow: hidden; }
+    .lang-bar-fill {
+      height: 100%; width: 0;
+      background: linear-gradient(90deg, var(--neon-yellow), #ffe066);
+      box-shadow: 0 0 8px var(--neon-yellow);
+      transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ── i18n ── */
+    [data-lang="en"] [lang="zh"],
+    [data-lang="zh"] [lang="en"] { display: none; }
+  </style>
 </head>
 <body>
+
+  <!-- BOOT OVERLAY -->
+  <div id="boot-overlay">
+    <div id="boot-lines"></div>
+    <div id="boot-bar-wrap"><div id="boot-bar"></div></div>
+  </div>
 
   <div class="scanlines"></div>
   <div class="grid-bg"></div>
@@ -18,29 +160,37 @@
   <nav class="navbar">
     <div class="nav-logo">&gt; ILING.SYS_</div>
     <div class="nav-links">
-      <a href="#about">ABOUT</a>
-      <a href="#skills">SKILLS</a>
-      <a href="#experience">EXPERIENCE</a>
-      <a href="#projects">PROJECTS</a>
-      <a href="#contact">CONTACT</a>
+      <a href="#about"><span lang="en">ABOUT</span><span lang="zh">關於</span></a>
+      <a href="#skills"><span lang="en">SKILLS</span><span lang="zh">技能</span></a>
+      <a href="#experience"><span lang="en">EXP</span><span lang="zh">經歷</span></a>
+      <a href="#projects"><span lang="en">PROJECTS</span><span lang="zh">專案</span></a>
+      <a href="#contact"><span lang="en">CONTACT</span><span lang="zh">聯絡</span></a>
+    </div>
+    <div class="nav-controls">
+      <button class="ctrl-btn lang-btn" id="langToggle" onclick="toggleLang()">中文</button>
+      <button class="ctrl-btn" id="themeToggle" onclick="toggleTheme()">☀ LIGHT</button>
     </div>
   </nav>
 
   <!-- HERO -->
   <header id="hero">
     <div class="hero-content">
-      <div class="hero-tag">&gt; INITIALIZING PROFILE...</div>
+      <div class="hero-tag">&gt; <span lang="en">INITIALIZING PROFILE...</span><span lang="zh">初始化個人檔案...</span></div>
       <h1 class="glitch" data-text="ILING CHEN">ILING CHEN</h1>
-      <div class="hero-subtitle">
-        <span class="typed-text"></span>
-      </div>
-      <p class="hero-desc">Full-Stack Developer · Data Scientist · Southend-on-Sea, UK</p>
+      <div class="hero-subtitle"><span class="typed-text"></span></div>
+      <p class="hero-desc">
+        <span lang="en">Full-Stack Developer · Data Scientist · Southend-on-Sea, UK</span>
+        <span lang="zh">全端開發者 · 資料科學家 · 英國 Southend-on-Sea</span>
+      </p>
       <div class="hero-btns">
         <a href="CV_Lin.pdf" download class="btn btn-primary">
-          <i class="fa-solid fa-download"></i> DOWNLOAD CV
+          <i class="fa-solid fa-download"></i> <span lang="en">DOWNLOAD CV</span><span lang="zh">下載履歷</span>
+        </a>
+        <a href="MA981_Dissertation_IlingChen.pdf" target="_blank" class="btn-dissertation">
+          <i class="fa-solid fa-file-lines"></i> <span lang="en">READ DISSERTATION</span><span lang="zh">閱讀論文</span>
         </a>
         <a href="#projects" class="btn btn-outline">
-          <i class="fa-solid fa-code"></i> VIEW PROJECTS
+          <i class="fa-solid fa-code"></i> <span lang="en">VIEW PROJECTS</span><span lang="zh">查看專案</span>
         </a>
       </div>
     </div>
@@ -53,17 +203,21 @@
   <!-- ABOUT -->
   <section class="section" id="about">
     <div class="section-label">&gt; SYS.PROFILE</div>
-    <h2>ABOUT <span class="accent">ME</span></h2>
-    <p class="about-text">Applied ML researcher and full-stack developer with an MSc in Applied Data Science from the University of Essex. Dissertation-proven strengths in end-to-end ML pipeline design — from leakage-safe preprocessing and multi-method feature selection (MI, RFIMP, RFE) to probabilistic calibration, hypothesis testing, and deployment-ready model optimisation across classical and deep architectures. Combines technical rigour with real-world adaptability: bridging data science, web development, and B2B strategy across UK and international markets.</p>
+    <h2><span lang="en">ABOUT <span class="accent">ME</span></span><span lang="zh">關於 <span class="accent">我</span></span></h2>
+    <p class="about-text" lang="en">Applied ML researcher and full-stack developer with an MSc in Applied Data Science from the University of Essex. Dissertation-proven strengths in end-to-end ML pipeline design — from leakage-safe preprocessing and multi-method feature selection (MI, RFIMP, RFE) to probabilistic calibration, hypothesis testing, and deployment-ready model optimisation across classical and deep architectures. Combines technical rigour with real-world adaptability: bridging data science, web development, and B2B strategy across UK and international markets.</p>
+    <p class="about-text" lang="zh">Essex 大學應用資料科學碩士，具備完整 ML pipeline 設計能力——從防洩漏預處理、多方法特徵選取（MI、RFIMP、RFE），到機率校準、假設檢定與部署優化。結合技術嚴謹性與實務適應力：跨足資料科學、網頁開發與 B2B 業務策略，橫跨英國及國際市場。</p>
     <div class="status-bar">
-      <span class="status-dot"></span> AVAILABLE FOR OPPORTUNITIES · SOUTHEND-ON-SEA, UK
+      <span class="status-dot"></span>
+      <span lang="en">AVAILABLE FOR OPPORTUNITIES · SOUTHEND-ON-SEA, UK</span>
+      <span lang="zh">正在尋找機會 · 英國 Southend-on-Sea</span>
     </div>
+
   </section>
 
   <!-- SKILLS -->
   <section class="section" id="skills">
     <div class="section-label">&gt; SKILL.MATRIX</div>
-    <h2>SKILL <span class="accent">LEVELS</span></h2>
+    <h2><span lang="en">SKILL <span class="accent">LEVELS</span></span><span lang="zh">技能 <span class="accent">指標</span></span></h2>
     <div class="skill-bars">
       <div class="skill-bar-item">
         <div class="skill-bar-label"><span>Python</span><span>90%</span></div>
@@ -86,7 +240,7 @@
         <div class="skill-bar-track"><div class="skill-bar-fill" style="--w:89%"></div></div>
       </div>
       <div class="skill-bar-item">
-        <div class="skill-bar-label"><span>Data Analysis &amp; Visualisation</span><span>85%</span></div>
+        <div class="skill-bar-label"><span><span lang="en">Data Analysis &amp; Visualisation</span><span lang="zh">資料分析與視覺化</span></span><span>85%</span></div>
         <div class="skill-bar-track"><div class="skill-bar-fill cyan" style="--w:85%"></div></div>
       </div>
       <div class="skill-bar-item">
@@ -99,133 +253,152 @@
       </div>
     </div>
 
+    <h2 style="margin-top:2.5rem"><span lang="en">LANGUAGE <span class="accent">PROFICIENCY</span></span><span lang="zh">語言 <span class="accent">能力</span></span></h2>
+    <div class="lang-bars" id="langBars">
+      <div class="lang-bar-item">
+        <div class="lang-bar-label">
+          <span>🇹🇼 <span lang="en">Mandarin Chinese</span><span lang="zh">中文（普通話）</span></span>
+          <span><span lang="en">Native</span><span lang="zh">母語</span> · 100%</span>
+        </div>
+        <div class="lang-bar-track"><div class="lang-bar-fill" style="--w:100%"></div></div>
+      </div>
+      <div class="lang-bar-item">
+        <div class="lang-bar-label">
+          <span>🇬🇧 <span lang="en">English</span><span lang="zh">英語</span></span>
+          <span>C1 / <span lang="en">Professional</span><span lang="zh">專業</span> · 88%</span>
+        </div>
+        <div class="lang-bar-track"><div class="lang-bar-fill" style="--w:88%"></div></div>
+      </div>
+    </div>
+
     <h2 style="margin-top:2.5rem">TECH <span class="accent">STACK</span></h2>
     <div class="skills-grid">
       <div class="skill-tag"><i class="fa-brands fa-html5"></i> HTML5</div>
       <div class="skill-tag"><i class="fa-brands fa-css3-alt"></i> CSS3</div>
       <div class="skill-tag"><i class="fa-brands fa-js"></i> JavaScript</div>
-      <div class="skill-tag">Responsive Design</div>
-      <div class="skill-tag">Webflow</div>
-      <div class="skill-tag">CMS Integration</div>
+      <div class="skill-tag"><span lang="en">Responsive Design</span><span lang="zh">響應式設計</span></div>
+      <div class="skill-tag">Webflow / CMS</div>
       <div class="skill-tag"><i class="fa-brands fa-python"></i> Python</div>
       <div class="skill-tag"><i class="fa-solid fa-database"></i> SQL</div>
       <div class="skill-tag">scikit-learn</div>
       <div class="skill-tag">TensorFlow / Keras</div>
-      <div class="skill-tag">Machine Learning</div>
       <div class="skill-tag">Feature Selection (MI · RFE · RFIMP)</div>
-      <div class="skill-tag">Model Calibration</div>
-      <div class="skill-tag">Statistical Testing (Wilcoxon · FDR)</div>
-      <div class="skill-tag">Neural Networks</div>
+      <div class="skill-tag"><span lang="en">Model Calibration</span><span lang="zh">模型校準</span></div>
+      <div class="skill-tag">Wilcoxon · FDR</div>
+      <div class="skill-tag"><span lang="en">Neural Networks</span><span lang="zh">神經網路</span></div>
       <div class="skill-tag">R</div>
       <div class="skill-tag">Matplotlib / Seaborn</div>
-      <div class="skill-tag">Big Data Analytics</div>
-      <div class="skill-tag">Statistical Modelling</div>
+      <div class="skill-tag"><span lang="en">Statistical Modelling</span><span lang="zh">統計建模</span></div>
       <div class="skill-tag"><i class="fa-brands fa-git-alt"></i> Git / GitHub</div>
-      <div class="skill-tag">VS Code</div>
-      <div class="skill-tag">SEO Optimisation</div>
-      <div class="skill-tag">Microsoft Office</div>
+      <div class="skill-tag">SEO</div>
       <div class="skill-tag learning">⚡ React.js</div>
       <div class="skill-tag learning">⚡ Django</div>
       <div class="skill-tag learning">⚡ AWS</div>
     </div>
-    <p class="learning-note">⚡ = Currently Learning</p>
+    <p class="learning-note">⚡ = <span lang="en">Currently Learning</span><span lang="zh">學習中</span></p>
   </section>
 
   <!-- EXPERIENCE -->
   <section class="section" id="experience">
     <div class="section-label">&gt; WORK.LOG</div>
-    <h2>WORK <span class="accent">EXPERIENCE</span></h2>
-
+    <h2><span lang="en">WORK <span class="accent">EXPERIENCE</span></span><span lang="zh">工作 <span class="accent">經歷</span></span></h2>
     <div class="exp-card">
       <div class="exp-header">
         <div>
-          <div class="exp-title">Sales Executive</div>
+          <div class="exp-title"><span lang="en">Sales Executive</span><span lang="zh">業務主管</span></div>
           <div class="exp-company">Phoenix Medical / Vita Herbal Nutrition</div>
         </div>
-        <div class="exp-period">2026 – Present</div>
+        <div class="exp-period">2026 – <span lang="en">Present</span><span lang="zh">至今</span></div>
       </div>
       <ul class="exp-list">
-        <li>Drive B2B sales of Chinese herbal medicine products to TCM practitioners and clinics across the UK and Europe</li>
-        <li>Spearheaded digital migration, transitioning clients from manual ordering to an e-commerce platform — hands-on UX and web systems exposure</li>
-        <li>Produced marketing content and managed online presence, applying SEO principles and CMS tools</li>
-        <li>Develop outreach campaigns targeting new clinic accounts across Southend, Colchester, and London</li>
+        <li lang="en">Drive B2B sales of Chinese herbal medicine products to TCM practitioners and clinics across the UK and Europe</li>
+        <li lang="zh">向英國及歐洲的中醫從業者與診所推動中草藥產品的 B2B 銷售</li>
+        <li lang="en">Spearheaded digital migration, transitioning clients from manual ordering to an e-commerce platform</li>
+        <li lang="zh">主導數位化轉型，協助客戶從人工訂購遷移至電商平台</li>
+        <li lang="en">Produced marketing content and managed online presence, applying SEO principles and CMS tools</li>
+        <li lang="zh">製作行銷內容、管理線上形象，運用 SEO 原則與 CMS 工具</li>
+        <li lang="en">Develop outreach campaigns targeting new clinic accounts across Southend, Colchester, and London</li>
+        <li lang="zh">在 Southend、Colchester 和倫敦開拓新診所客戶拓展活動</li>
       </ul>
     </div>
-
     <div class="exp-card">
       <div class="exp-header">
         <div>
-          <div class="exp-title">Education Consultant (Part-time)</div>
+          <div class="exp-title"><span lang="en">Education Consultant (Part-time)</span><span lang="zh">留學顧問（兼職）</span></div>
           <div class="exp-company">UKEC — UK Education Centre</div>
         </div>
         <div class="exp-period">2025 – 2026</div>
       </div>
       <ul class="exp-list">
-        <li>Advised 30+ international students on UK university applications, course selection, and visa requirements</li>
-        <li>Delivered bilingual consultations (English / Mandarin), achieving strong client satisfaction across diverse audiences</li>
-        <li>Coordinated with university partners and internal teams under deadline pressure</li>
+        <li lang="en">Advised 30+ international students on UK university applications, course selection, and visa requirements</li>
+        <li lang="zh">為 30+ 名國際學生提供英國大學申請、選課及簽證建議</li>
+        <li lang="en">Delivered bilingual consultations (English / Mandarin), achieving strong client satisfaction</li>
+        <li lang="zh">以中英雙語進行諮詢，獲得高客戶滿意度</li>
+        <li lang="en">Coordinated with university partners and internal teams under deadline pressure</li>
+        <li lang="zh">在截止期限壓力下與大學合作夥伴及內部團隊協調</li>
       </ul>
     </div>
-
     <div class="exp-card">
       <div class="exp-header">
         <div>
-          <div class="exp-title">IT Assistant</div>
+          <div class="exp-title"><span lang="en">IT Assistant</span><span lang="zh">IT 助理</span></div>
           <div class="exp-company">Shopee Taiwan</div>
         </div>
         <div class="exp-period">2020 – 2021</div>
       </div>
       <ul class="exp-list">
-        <li>Provided technical support for e-commerce platform systems, troubleshooting UI and functionality issues</li>
-        <li>Collaborated with development teams on platform improvements and quality assurance</li>
-        <li>Gained exposure to large-scale digital product environments and user flows</li>
+        <li lang="en">Provided technical support for e-commerce platform systems, troubleshooting UI and functionality issues</li>
+        <li lang="zh">為電商平台提供技術支援，排除 UI 與功能問題</li>
+        <li lang="en">Collaborated with development teams on platform improvements and quality assurance</li>
+        <li lang="zh">與開發團隊合作進行平台改善與品質保證</li>
+        <li lang="en">Gained exposure to large-scale digital product environments and user flows</li>
+        <li lang="zh">熟悉大規模數位產品環境與使用者流程</li>
       </ul>
     </div>
   </section>
 
-  <!-- EDUCATION + EXTRACURRICULAR -->
+  <!-- EDUCATION -->
   <section class="section" id="education">
     <div class="section-label">&gt; EDUCATION.DB</div>
-    <h2>EDUCATION &amp; <span class="accent">TIMELINE</span></h2>
+    <h2><span lang="en">EDUCATION &amp; <span class="accent">TIMELINE</span></span><span lang="zh">教育 &amp; <span class="accent">時間軸</span></span></h2>
     <div class="timeline">
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-content">
           <div class="tl-year">2024 – 2025</div>
-          <div class="tl-title">MSc Applied Data Science</div>
+          <div class="tl-title"><span lang="en">MSc Applied Data Science</span><span lang="zh">應用資料科學碩士</span></div>
           <div class="tl-sub">University of Essex, UK</div>
-          <div class="tl-detail">Machine Learning · Big Data Analytics · Statistical Modelling · Neural Networks · R · SQL · Data Visualisation</div>
+          <div class="tl-detail">Machine Learning · Big Data Analytics · Statistical Modelling · Neural Networks · R · SQL</div>
         </div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
         <div class="tl-content">
           <div class="tl-year">2019 – 2023</div>
-          <div class="tl-title">BSc Information Technology Management</div>
+          <div class="tl-title"><span lang="en">BSc Information Technology Management</span><span lang="zh">資訊科技管理學士</span></div>
           <div class="tl-sub">University of Essex, UK</div>
-          <div class="tl-detail">Software development · Database management · Applied computing · System design</div>
+          <div class="tl-detail"><span lang="en">Software development · Database management · Applied computing · System design</span><span lang="zh">軟體開發 · 資料庫管理 · 應用運算 · 系統設計</span></div>
         </div>
       </div>
     </div>
-
-    <h2 style="margin-top:2.5rem">EXTRA<span class="accent">CURRICULAR</span></h2>
+    <h2 style="margin-top:2.5rem"><span lang="en">EXTRA<span class="accent">CURRICULAR</span></span><span lang="zh">課外 <span class="accent">活動</span></span></h2>
     <div class="timeline">
       <div class="tl-item">
         <div class="tl-dot pink"></div>
         <div class="tl-content">
-          <div class="tl-year">2023 – Present</div>
-          <div class="tl-title">Basketball Club Team Leader</div>
+          <div class="tl-year">2023 – <span lang="en">Present</span><span lang="zh">至今</span></div>
+          <div class="tl-title"><span lang="en">Basketball Club Team Leader</span><span lang="zh">籃球社隊長</span></div>
           <div class="tl-sub">Ming Chuan University</div>
-          <div class="tl-detail">Strategy development · Team building · Performance optimisation</div>
+          <div class="tl-detail"><span lang="en">Strategy development · Team building · Performance optimisation</span><span lang="zh">策略制定 · 團隊建設 · 績效優化</span></div>
         </div>
       </div>
       <div class="tl-item">
         <div class="tl-dot pink"></div>
         <div class="tl-content">
           <div class="tl-year">2019 – 2023</div>
-          <div class="tl-title">Vice President — International College</div>
+          <div class="tl-title"><span lang="en">Vice President — International College</span><span lang="zh">國際學院副主席</span></div>
           <div class="tl-sub">Ming Chuan University</div>
-          <div class="tl-detail">Led large-scale events across 2 campuses, 3 departments, 5 colleges · Directed diverse cross-campus teams</div>
+          <div class="tl-detail"><span lang="en">Led large-scale events across 2 campuses, 3 departments, 5 colleges</span><span lang="zh">帶領橫跨 2 個校區、3 個系所、5 個學院的大型活動</span></div>
         </div>
       </div>
     </div>
@@ -234,7 +407,7 @@
   <!-- PROJECTS -->
   <section class="section" id="projects">
     <div class="section-label">&gt; PROJECT.DB</div>
-    <h2>FEATURED <span class="accent">PROJECTS</span></h2>
+    <h2><span lang="en">FEATURED <span class="accent">PROJECTS</span></span><span lang="zh">精選 <span class="accent">專案</span></span></h2>
 
     <div class="project-card">
       <div class="project-header">
@@ -243,17 +416,23 @@
           <i class="fa-brands fa-github"></i> GITHUB
         </a>
       </div>
-      <h3>Network Intrusion Detection System (IDS)</h3>
-      <p>MSc dissertation at University of Essex — built a full end-to-end, leakage-safe ML pipeline for flow-based network intrusion detection, comparing classical models (Random Forest, SVM, k-NN) against deep architectures (MLP, CNN, LSTM) across 11 attack classes on ~300,000 flow records.</p>
+      <h3><span lang="en">Network Intrusion Detection System (IDS)</span><span lang="zh">網路入侵偵測系統（IDS）</span></h3>
+      <p lang="en">MSc dissertation at University of Essex — built a full end-to-end, leakage-safe ML pipeline for flow-based network intrusion detection, comparing classical models (Random Forest, SVM, k-NN) against deep architectures (MLP, CNN, LSTM) across 11 attack classes on ~300,000 flow records.</p>
+      <p lang="zh">Essex 大學碩士論文——建立完整端對端、防洩漏 ML pipeline，比較傳統模型與深度架構在約 30 萬筆流量記錄及 11 種攻擊類別上的表現。</p>
       <ul class="project-bullets">
-        <li>Engineered a strict split-then-fit preprocessing pipeline (median imputation, IQR outlier removal, variance filtering) to eliminate data leakage — a critical flaw in most published IDS studies</li>
-        <li>Compared 3 feature selection families — Mutual Information (filter), RF Importance (embedded), RFE (wrapper) — using Jaccard overlap and cross-seed stability analysis; identified a compact core of 5–10 features achieving ≥95% of peak macro-F1</li>
-        <li>Evaluated beyond accuracy: reported ROC-AUC, PR-AUC, Brier score, and ECE calibration metrics; applied Platt and isotonic post-hoc calibration to improve probability reliability without loss of ranking performance</li>
-        <li>Ran Wilcoxon signed-rank hypothesis tests across 3 random seeds; confirmed H4 — ≤10 features achieves ≥95% peak F1 — providing a clear performance–latency trade-off for deployment</li>
-        <li>Random Forest + RFIMP (K=5) achieved macro-F1 = 1.000 with 0.43s training time; SVM + MI (K=10) achieved F1 = 0.999 at sub-second inference — both recommended for real-world SOC deployment</li>
+        <li lang="en">Engineered a strict split-then-fit preprocessing pipeline to eliminate data leakage — a critical flaw in most published IDS studies</li>
+        <li lang="zh">建立嚴格的先分割後擬合預處理 pipeline，消除資料洩漏——多數已發表 IDS 研究的關鍵缺陷</li>
+        <li lang="en">Compared 3 feature selection families using Jaccard overlap and cross-seed stability; identified 5–10 feature core achieving ≥95% peak macro-F1</li>
+        <li lang="zh">比較 3 種特徵選取方法，找出 5–10 個特徵核心達到 ≥95% 峰值 macro-F1</li>
+        <li lang="en">Evaluated ROC-AUC, PR-AUC, Brier score, ECE; applied Platt and isotonic calibration for improved probability reliability</li>
+        <li lang="zh">評估 ROC-AUC、PR-AUC、Brier 分數和 ECE；套用校準方法提升機率可靠性</li>
+        <li lang="en">Wilcoxon signed-rank tests confirmed H4: ≤10 features achieves ≥95% peak F1 — clear performance–latency trade-off for SOC deployment</li>
+        <li lang="zh">Wilcoxon 符號秩檢定確認 H4：≤10 個特徵可達 ≥95% 峰值 F1，為 SOC 部署提供清晰的效能–延遲權衡</li>
+        <li lang="en">Best result: RF + RFIMP (K=5) macro-F1 = 1.000 at 0.43s training; SVM + MI (K=10) F1 = 0.999 sub-second inference</li>
+        <li lang="zh">最佳結果：RF + RFIMP（K=5）macro-F1 = 1.000，訓練時間 0.43 秒；SVM + MI（K=10）F1 = 0.999</li>
       </ul>
       <div class="project-tags">
-        <span>Python</span><span>scikit-learn</span><span>Random Forest</span><span>SVM</span><span>k-NN</span><span>MLP</span><span>CNN</span><span>LSTM</span><span>Feature Selection</span><span>Calibration</span><span>Cybersecurity</span><span>TensorFlow</span>
+        <span>Python</span><span>scikit-learn</span><span>Random Forest</span><span>SVM</span><span>k-NN</span><span>MLP</span><span>CNN</span><span>LSTM</span><span>Feature Selection</span><span>Calibration</span><span>TensorFlow</span>
       </div>
     </div>
 
@@ -264,12 +443,16 @@
           <i class="fa-brands fa-github"></i> VIEW CODE
         </a>
       </div>
-      <h3>EV Charging Behaviour Analysis & Prediction</h3>
-      <p>Analysed a simulated dataset of EV charging sessions to uncover behavioural patterns and predict both charging cost and energy consumption — combining unsupervised clustering with supervised regression models.</p>
+      <h3><span lang="en">EV Charging Behaviour Analysis &amp; Prediction</span><span lang="zh">電動車充電行為分析與預測</span></h3>
+      <p lang="en">Analysed a simulated dataset of EV charging sessions to uncover behavioural patterns and predict both charging cost and energy consumption — combining unsupervised clustering with supervised regression models.</p>
+      <p lang="zh">分析模擬的電動車充電資料集，揭示行為模式並預測充電費用與耗電量，結合無監督聚類與監督式迴歸模型。</p>
       <ul class="project-bullets">
-        <li>Cleaned and preprocessed the dataset, performed EDA and visualisations using Pandas, Matplotlib, and Seaborn</li>
-        <li>Applied KMeans clustering to segment EV usage patterns by charging behaviour</li>
-        <li>Built predictive models (Linear Regression, Decision Tree Regressor) to forecast charging cost and energy consumed (kWh)</li>
+        <li lang="en">Cleaned and preprocessed the dataset; EDA and visualisations using Pandas, Matplotlib, and Seaborn</li>
+        <li lang="zh">清洗並預處理資料集；使用 Pandas、Matplotlib 和 Seaborn 執行 EDA 與視覺化</li>
+        <li lang="en">Applied KMeans clustering to segment EV usage patterns by charging behaviour</li>
+        <li lang="zh">應用 KMeans 聚類依充電行為區隔電動車使用模式</li>
+        <li lang="en">Built Linear Regression and Decision Tree models to forecast charging cost and energy consumed (kWh)</li>
+        <li lang="zh">建立線性迴歸與決策樹模型，預測充電費用與耗電量（kWh）</li>
       </ul>
       <div class="project-tags">
         <span>Python</span><span>scikit-learn</span><span>KMeans</span><span>Linear Regression</span><span>Decision Tree</span><span>Pandas</span><span>Matplotlib</span><span>Seaborn</span>
@@ -283,10 +466,11 @@
           <i class="fa-brands fa-github"></i> VIEW CODE
         </a>
       </div>
-      <h3>Crime &amp; Weather Correlation — Colchester</h3>
-      <p>Explored crime data in Colchester and its correlation with weather patterns using R, Leaflet, and Plotly. Created interactive maps and visual insights to support local policing strategies.</p>
+      <h3><span lang="en">Crime &amp; Weather Correlation — Colchester</span><span lang="zh">犯罪與天氣相關性分析 — Colchester</span></h3>
+      <p lang="en">Explored crime data in Colchester and its correlation with weather patterns using R, Leaflet, and Plotly. Created interactive maps and visual insights to support local policing strategies.</p>
+      <p lang="zh">使用 R、Leaflet 和 Plotly 探索 Colchester 犯罪資料與天氣型態的相關性，建立互動式地圖與視覺洞察，支援地方警務策略。</p>
       <div class="project-tags">
-        <span>R</span><span>Leaflet</span><span>Plotly</span><span>GIS</span><span>Data Visualisation</span>
+        <span>R</span><span>Leaflet</span><span>Plotly</span><span>GIS</span><span lang="en">Data Visualisation</span><span lang="zh">資料視覺化</span>
       </div>
     </div>
   </section>
@@ -294,35 +478,29 @@
   <!-- CONTACT -->
   <section class="section" id="contact">
     <div class="section-label">&gt; CONNECT.SYS</div>
-    <h2>GET IN <span class="accent">TOUCH</span></h2>
+    <h2><span lang="en">GET IN <span class="accent">TOUCH</span></span><span lang="zh">聯絡 <span class="accent">我</span></span></h2>
     <div class="contact-grid">
       <a href="mailto:a0916897655@gmail.com" class="contact-item">
-        <i class="fa-solid fa-envelope"></i>
-        <span>a0916897655@gmail.com</span>
+        <i class="fa-solid fa-envelope"></i><span>a0916897655@gmail.com</span>
       </a>
       <a href="https://github.com/cil101101" target="_blank" class="contact-item">
-        <i class="fa-brands fa-github"></i>
-        <span>github.com/cil101101</span>
+        <i class="fa-brands fa-github"></i><span>github.com/cil101101</span>
       </a>
       <a href="https://cil101101.github.io" target="_blank" class="contact-item">
-        <i class="fa-solid fa-globe"></i>
-        <span>cil101101.github.io</span>
+        <i class="fa-solid fa-globe"></i><span>cil101101.github.io</span>
       </a>
       <div class="contact-item">
-        <i class="fa-solid fa-phone"></i>
-        <span>07934587404</span>
+        <i class="fa-solid fa-phone"></i><span>07934587404</span>
       </div>
       <div class="contact-item">
-        <i class="fa-solid fa-location-dot"></i>
-        <span>Southend-on-Sea, UK</span>
+        <i class="fa-solid fa-location-dot"></i><span>Southend-on-Sea, UK</span>
       </div>
     </div>
     <div class="lang-box">
-      <span>🗣 Mandarin (Native)</span>
-      <span>🗣 English (C1 / Professional)</span>
       <span>🏀 Basketball</span>
       <span>🎨 UI/UX Design</span>
-      <span>📊 Data Visualisation</span>
+      <span>📊 <span lang="en">Data Visualisation</span><span lang="zh">資料視覺化</span></span>
+      <span>🌏 <span lang="en">Mandarin · English</span><span lang="zh">中文 · 英文</span></span>
     </div>
   </section>
 
@@ -332,16 +510,69 @@
   </footer>
 
   <script>
+    /* ══ BOOT SEQUENCE ══ */
+    const bootLines = [
+      { text: '> ILING.SYS v2.0 — BOOT SEQUENCE INITIATED', cls: '' },
+      { text: '> Loading kernel modules...', cls: '' },
+      { text: '> [OK] Neural interface driver loaded', cls: 'green' },
+      { text: '> [OK] Portfolio database connected', cls: 'green' },
+      { text: '> [OK] Project index compiled (3 entries)', cls: 'green' },
+      { text: '> Authenticating profile: ILING CHEN', cls: 'pink' },
+      { text: '> MSc Applied Data Science — VERIFIED', cls: 'green' },
+      { text: '> University of Essex, UK — ACCESS GRANTED', cls: 'green' },
+      { text: '══════════════════════════════════════════', cls: '' },
+      { text: 'ILING CHEN // PORTFOLIO', cls: 'white' },
+      { text: '══════════════════════════════════════════', cls: '' },
+    ];
+    const linesEl = document.getElementById('boot-lines');
+    const barEl = document.getElementById('boot-bar');
+    const overlay = document.getElementById('boot-overlay');
+    let lineIndex = 0;
+    function showNextLine() {
+      if (lineIndex >= bootLines.length) {
+        barEl.style.width = '100%';
+        setTimeout(() => { overlay.classList.add('hidden'); setTimeout(() => overlay.remove(), 700); }, 400);
+        return;
+      }
+      const { text, cls } = bootLines[lineIndex];
+      const div = document.createElement('div');
+      div.className = 'boot-line' + (cls ? ' ' + cls : '');
+      div.textContent = text;
+      linesEl.appendChild(div);
+      barEl.style.width = ((lineIndex + 1) / bootLines.length * 100) + '%';
+      lineIndex++;
+      setTimeout(showNextLine, cls === 'white' ? 300 : 90);
+    }
+    showNextLine();
+
+    /* ══ THEME TOGGLE ══ */
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('themeToggle').textContent = isDark ? '🌙 DARK' : '☀ LIGHT';
+    }
+
+    /* ══ LANGUAGE TOGGLE ══ */
+    function toggleLang() {
+      const html = document.documentElement;
+      const isEn = html.getAttribute('data-lang') === 'en';
+      html.setAttribute('data-lang', isEn ? 'zh' : 'en');
+      document.getElementById('langToggle').textContent = isEn ? 'EN' : '中文';
+    }
+
+    /* ══ GLITCH ══ */
     const glitch = document.querySelector('.glitch');
     setInterval(() => {
       glitch.classList.add('glitch-active');
       setTimeout(() => glitch.classList.remove('glitch-active'), 200);
     }, 3000);
 
+    /* ══ SKILL + LANG BARS ══ */
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
-          e.target.querySelectorAll('.skill-bar-fill').forEach(bar => {
+          e.target.querySelectorAll('.skill-bar-fill, .lang-bar-fill').forEach(bar => {
             bar.style.width = bar.style.getPropertyValue('--w');
           });
         }
@@ -349,16 +580,21 @@
     }, { threshold: 0.3 });
     document.querySelectorAll('#skills').forEach(s => observer.observe(s));
 
-    const texts = ['Full-Stack Web Developer', 'Data Scientist', 'ML Engineer', 'UI/UX Enthusiast'];
+    /* ══ TYPED TEXT ══ */
+    const textsEn = ['Full-Stack Web Developer', 'Data Scientist', 'ML Engineer', 'Applied ML Researcher'];
+    const textsZh = ['全端網頁開發者', '資料科學家', 'ML 工程師', '應用 ML 研究員'];
     let i = 0, j = 0, del = false;
     const el = document.querySelector('.typed-text');
+    function getTexts() { return document.documentElement.getAttribute('data-lang') === 'zh' ? textsZh : textsEn; }
     function type() {
+      const texts = getTexts();
+      const cur = i % texts.length;
       if (!del) {
-        el.textContent = texts[i].slice(0, ++j);
-        if (j === texts[i].length) { del = true; setTimeout(type, 1500); return; }
+        el.textContent = texts[cur].slice(0, ++j);
+        if (j === texts[cur].length) { del = true; setTimeout(type, 1500); return; }
       } else {
-        el.textContent = texts[i].slice(0, --j);
-        if (j === 0) { del = false; i = (i + 1) % texts.length; }
+        el.textContent = texts[cur].slice(0, --j);
+        if (j === 0) { del = false; i++; }
       }
       setTimeout(type, del ? 50 : 80);
     }
