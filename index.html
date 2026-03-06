@@ -53,6 +53,8 @@
 
     /* ── NAV ── */
     .nav-controls { display: flex; align-items: center; gap: 0.6rem; }
+    /* Navbar layout: logo left, controls+burger right */
+    .navbar { gap: 0.8rem; }
     .ctrl-btn {
       font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; letter-spacing: 1.5px;
       padding: 0.3rem 0.65rem; border: 1px solid var(--dark-border);
@@ -209,12 +211,13 @@
         border-bottom: 1px solid var(--dark-border); font-size: 0.8rem;
         min-height: 44px; display: flex; align-items: center; justify-content: center;
       }
-      .nav-controls { display: none !important; }
+      .nav-controls { display: none; }
       .mobile-ctrl-row {
         display: none; flex-direction: row; justify-content: center; gap: 0.8rem;
         padding: 0.85rem 1rem; border-top: 1px solid var(--dark-border);
+        width: 100%;
       }
-      .mobile-ctrl-row.open { display: flex; }
+      .nav-links.open .mobile-ctrl-row { display: flex; }
       .ctrl-btn { min-height: 44px; padding: 0 1.2rem; font-size: 0.72rem; }
       #hero { flex-direction: column-reverse; text-align: center; padding: 6.5rem 1.2rem 2.5rem; gap: 1.5rem; }
       .hero-content { max-width: 100%; }
@@ -372,6 +375,10 @@
   <!-- NAV -->
   <nav class="navbar">
     <div class="nav-logo">&gt; ILING.SYS_</div>
+    <div class="nav-controls">
+      <button class="ctrl-btn lang-btn" id="langToggle" onclick="toggleLang()">中文</button>
+      <button class="ctrl-btn" id="themeToggle" onclick="toggleTheme()">☀ LIGHT</button>
+    </div>
     <button class="hamburger" id="hamburger" onclick="toggleMenu()">
       <span></span><span></span><span></span>
     </button>
@@ -381,14 +388,10 @@
       <a href="#experience"><span lang="en">EXP</span><span lang="zh">經歷</span></a>
       <a href="#projects"><span lang="en">PROJECTS</span><span lang="zh">專案</span></a>
       <a href="#contact"><span lang="en">CONTACT</span><span lang="zh">聯絡</span></a>
-    </div>
-    <div class="nav-controls">
-      <button class="ctrl-btn lang-btn" id="langToggle" onclick="toggleLang()">中文</button>
-      <button class="ctrl-btn" id="themeToggle" onclick="toggleTheme()">☀ LIGHT</button>
-    </div>
-    <div class="mobile-ctrl-row" id="mobileCtrl">
-      <button class="ctrl-btn lang-btn" onclick="toggleLang(); syncLangBtns()">中文</button>
-      <button class="ctrl-btn" onclick="toggleTheme()">☀ LIGHT</button>
+      <div class="mobile-ctrl-row" id="mobileCtrl">
+        <button class="ctrl-btn lang-btn" onclick="toggleLang()">中文</button>
+        <button class="ctrl-btn" onclick="toggleTheme()">☀ LIGHT</button>
+      </div>
     </div>
   </nav>
 
@@ -898,13 +901,11 @@
     function toggleMenu() {
       document.getElementById('hamburger').classList.toggle('open');
       document.getElementById('navLinks').classList.toggle('open');
-      document.getElementById('mobileCtrl').classList.toggle('open');
     }
     document.querySelectorAll('#navLinks a').forEach(a => {
       a.addEventListener('click', () => {
         document.getElementById('hamburger').classList.remove('open');
         document.getElementById('navLinks').classList.remove('open');
-        document.getElementById('mobileCtrl').classList.remove('open');
       });
     });
 
@@ -1023,7 +1024,7 @@
       const html = document.documentElement;
       const isDark = html.getAttribute('data-theme') === 'dark';
       html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-      document.getElementById('themeToggle').textContent = isDark ? '🌙 DARK' : '☀ LIGHT';
+      syncThemeBtn();
     }
 
     /* ══ LANG TOGGLE ══ */
@@ -1033,6 +1034,13 @@
         b.textContent = isZh ? 'EN' : '中文';
       });
       updateExpandLabels();
+    }
+    // Also sync mobile theme button text
+    function syncThemeBtn() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      document.querySelectorAll('#themeToggle, .mobile-ctrl-row .ctrl-btn:not(.lang-btn)').forEach(b => {
+        b.textContent = isDark ? '☀ LIGHT' : '🌙 DARK';
+      });
     }
     function toggleLang() {
       const html = document.documentElement;
