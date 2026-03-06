@@ -209,11 +209,12 @@
         border-bottom: 1px solid var(--dark-border); font-size: 0.8rem;
         min-height: 44px; display: flex; align-items: center; justify-content: center;
       }
-      .nav-controls {
+      .nav-controls { display: none !important; }
+      .mobile-ctrl-row {
         display: none; flex-direction: row; justify-content: center; gap: 0.8rem;
         padding: 0.85rem 1rem; border-top: 1px solid var(--dark-border);
       }
-      .nav-controls.open { display: flex; }
+      .mobile-ctrl-row.open { display: flex; }
       .ctrl-btn { min-height: 44px; padding: 0 1.2rem; font-size: 0.72rem; }
       #hero { flex-direction: column-reverse; text-align: center; padding: 6.5rem 1.2rem 2.5rem; gap: 1.5rem; }
       .hero-content { max-width: 100%; }
@@ -384,6 +385,10 @@
     <div class="nav-controls">
       <button class="ctrl-btn lang-btn" id="langToggle" onclick="toggleLang()">中文</button>
       <button class="ctrl-btn" id="themeToggle" onclick="toggleTheme()">☀ LIGHT</button>
+    </div>
+    <div class="mobile-ctrl-row" id="mobileCtrl">
+      <button class="ctrl-btn lang-btn" onclick="toggleLang(); syncLangBtns()">中文</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">☀ LIGHT</button>
     </div>
   </nav>
 
@@ -652,7 +657,7 @@
       <h3><span lang="en">Network Intrusion Detection System (IDS)</span><span lang="zh">網路入侵偵測系統（IDS）</span></h3>
       <p lang="en">MSc dissertation at University of Essex — built a full end-to-end, leakage-safe ML pipeline for flow-based network intrusion detection, comparing classical models (Random Forest, SVM, k-NN) against deep architectures (MLP, CNN, LSTM) across 11 attack classes on ~300,000 flow records.</p>
       <p lang="zh">Essex 大學碩士論文——建立完整端對端、防洩漏 ML pipeline，比較傳統模型與深度架構在約 30 萬筆流量記錄及 11 種攻擊類別上的表現。</p>
-      <button class="project-expand-btn" onclick="toggleBullets(this)" lang="en"><span class="arrow">▼</span> SHOW DETAILS</button><button class="project-expand-btn" onclick="toggleBullets(this)" lang="zh"><span class="arrow">▼</span> 展開詳情</button><ul class="project-bullets">
+      <button class="project-expand-btn unified-expand" onclick="toggleBullets(this)"><span class="arrow">▼</span> <span class="expand-label">SHOW DETAILS</span></button><ul class="project-bullets">
         <li lang="en">Engineered a strict split-then-fit preprocessing pipeline to eliminate data leakage — a critical flaw in most published IDS studies</li>
         <li lang="zh">建立嚴格的先分割後擬合預處理 pipeline，消除資料洩漏——多數已發表 IDS 研究的關鍵缺陷</li>
         <li lang="en">Compared 3 feature selection families using Jaccard overlap and cross-seed stability; identified 5–10 feature core achieving ≥95% peak macro-F1</li>
@@ -680,7 +685,7 @@
       <h3><span lang="en">EV Charging Behaviour Analysis &amp; Prediction</span><span lang="zh">電動車充電行為分析與預測</span></h3>
       <p lang="en">Analysed a simulated dataset of EV charging sessions to uncover behavioural patterns and predict both charging cost and energy consumption — combining unsupervised clustering with supervised regression models.</p>
       <p lang="zh">分析模擬的電動車充電資料集，揭示行為模式並預測充電費用與耗電量，結合無監督聚類與監督式迴歸模型。</p>
-      <button class="project-expand-btn" onclick="toggleBullets(this)" lang="en"><span class="arrow">▼</span> SHOW DETAILS</button><button class="project-expand-btn" onclick="toggleBullets(this)" lang="zh"><span class="arrow">▼</span> 展開詳情</button><ul class="project-bullets">
+      <button class="project-expand-btn unified-expand" onclick="toggleBullets(this)"><span class="arrow">▼</span> <span class="expand-label">SHOW DETAILS</span></button><ul class="project-bullets">
         <li lang="en">Cleaned and preprocessed the dataset; EDA and visualisations using Pandas, Matplotlib, and Seaborn</li>
         <li lang="zh">清洗並預處理資料集；使用 Pandas、Matplotlib 和 Seaborn 執行 EDA 與視覺化</li>
         <li lang="en">Applied KMeans clustering to segment EV usage patterns by charging behaviour</li>
@@ -891,38 +896,38 @@
 
     /* ══ HAMBURGER ══ */
     function toggleMenu() {
-      const hbg = document.getElementById('hamburger');
-      const nav = document.getElementById('navLinks');
-      const ctrl = document.querySelector('.nav-controls');
-      hbg.classList.toggle('open');
-      nav.classList.toggle('open');
-      if (ctrl) ctrl.classList.toggle('open');
+      document.getElementById('hamburger').classList.toggle('open');
+      document.getElementById('navLinks').classList.toggle('open');
+      document.getElementById('mobileCtrl').classList.toggle('open');
     }
     document.querySelectorAll('#navLinks a').forEach(a => {
       a.addEventListener('click', () => {
         document.getElementById('hamburger').classList.remove('open');
         document.getElementById('navLinks').classList.remove('open');
-        const ctrl = document.querySelector('.nav-controls');
-        if (ctrl) ctrl.classList.remove('open');
+        document.getElementById('mobileCtrl').classList.remove('open');
       });
     });
 
     /* ══ PROJECT EXPAND ══ */
+    function getExpandLabel(isOpen) {
+      const isZh = document.documentElement.getAttribute('data-lang') === 'zh';
+      if (isOpen) return isZh ? '收合詳情' : 'HIDE DETAILS';
+      return isZh ? '展開詳情' : 'SHOW DETAILS';
+    }
+    function updateExpandLabels() {
+      document.querySelectorAll('.unified-expand').forEach(btn => {
+        const ul = btn.nextElementSibling;
+        const isOpen = ul && ul.classList.contains('expanded');
+        btn.querySelector('.expand-label').textContent = getExpandLabel(isOpen);
+      });
+    }
     function toggleBullets(btn) {
       const ul = btn.nextElementSibling;
-      const actualUl = ul.tagName === 'BUTTON' ? ul.nextElementSibling : ul;
-      const allBtns = btn.parentElement.querySelectorAll('.project-expand-btn');
-      const isOpen = actualUl.classList.contains('expanded');
-      actualUl.classList.toggle('expanded');
-      allBtns.forEach(b => {
-        b.classList.toggle('open', !isOpen);
-        b.querySelector('.arrow').textContent = isOpen ? '▼' : '▲';
-        const isZh = b.getAttribute('lang') === 'zh';
-        b.innerHTML = b.innerHTML.replace(
-          isOpen ? (isZh ? '收合詳情' : 'HIDE DETAILS') : (isZh ? '展開詳情' : 'SHOW DETAILS'),
-          isOpen ? (isZh ? '展開詳情' : 'SHOW DETAILS') : (isZh ? '收合詳情' : 'HIDE DETAILS')
-        );
-      });
+      const isOpen = ul.classList.contains('expanded');
+      ul.classList.toggle('expanded');
+      btn.classList.toggle('open', !isOpen);
+      btn.querySelector('.arrow').textContent = isOpen ? '▼' : '▲';
+      btn.querySelector('.expand-label').textContent = getExpandLabel(!isOpen);
     }
     function checkMobile() {
       const isMobile = window.innerWidth <= 768;
@@ -1022,11 +1027,18 @@
     }
 
     /* ══ LANG TOGGLE ══ */
+    function syncLangBtns() {
+      const isZh = document.documentElement.getAttribute('data-lang') === 'zh';
+      document.querySelectorAll('#langToggle, .mobile-ctrl-row .lang-btn').forEach(b => {
+        b.textContent = isZh ? 'EN' : '中文';
+      });
+      updateExpandLabels();
+    }
     function toggleLang() {
       const html = document.documentElement;
       const isEn = html.getAttribute('data-lang') === 'en';
       html.setAttribute('data-lang', isEn ? 'zh' : 'en');
-      document.getElementById('langToggle').textContent = isEn ? 'EN' : '中文';
+      syncLangBtns();
     }
 
     /* ══ GLITCH ══ */
@@ -1070,6 +1082,7 @@
   </script>
 </body>
 </html>
+
 
 
 
